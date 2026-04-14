@@ -22,7 +22,10 @@ if ($existing) {
     -dname "CN=Telegram, OU=Developer, O=Telegram, L=Unknown, ST=Unknown, C=US"
 
 if ($LASTEXITCODE -eq 0) {
+    $base64 = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($keystorePath))
     Write-Host "Keystore created: $keystorePath"
+    Write-Host "Base64 encoded:"
+    Write-Host $base64
 } else {
     Write-Host "Failed to create keystore"
 }
