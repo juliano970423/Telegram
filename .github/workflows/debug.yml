@@ -23,6 +23,8 @@ jobs:
         file: ./Dockerfile
         tags: telegram-build
         outputs: type=local,dest=/tmp/apk
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
 
     - name: Find Debug APK
       run: ls -la /tmp/apk/TMessagesProj/build/outputs/apk/debug/

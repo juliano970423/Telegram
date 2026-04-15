@@ -35,6 +35,8 @@ jobs:
         file: ./Dockerfile
         tags: telegram-build
         outputs: type=local,dest=/tmp/apk
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
 
     - name: List APKs
       run: find /tmp/apk -name "*.apk" -type f
