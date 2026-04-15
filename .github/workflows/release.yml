@@ -2,6 +2,15 @@ name: Release Build
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g., 12.6.4)'
+        required: true
+        default: '12.6.4'
+      build:
+        description: 'Build number'
+        required: true
+        default: '6666'
 
 jobs:
   build:
@@ -10,31 +19,28 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v2
-
-    - name: Setup NDK
+    - name: Create dummy gradle.properties
       run: |
-        echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "ndk;21.4.7075529"
-
-    - name: Set up keystore credentials
-      run: |
-        echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> $GITHUB_ENV
-        echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> $GITHUB_ENV
-        echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> $GITHUB_ENV
-        echo "RELEASE_KEYSTORE_PATH=TMessagesProj/config/release.keystore" >> $GITHUB_ENV
+        echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" > gradle.properties
+        echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> gradle.properties
+        echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> gradle.properties
 
     - name: Build Release APK
-      run: ./gradlew assembleRelease
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        tags: telegram-build
+        outputs: type=local,dest=/tmp/apk
 
-    - name: Upload Release APK
+    - name: List APKs
+      run: find /tmp/apk -name "*.apk" -type f
+
+    - name: Upload Release APKs
       uses: actions/upload-artifact@v4
       with:
         name: telegram-release.apk
-        path: TMessagesProj/build/outputs/apk/release/Telegram*.apk
+        path: /tmp/apk/TMessagesProj/build/outputs/apk/
