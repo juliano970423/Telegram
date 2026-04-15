@@ -29,8 +29,11 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleDebug
 
+    - name: Find Debug APK
+      run: ls -la TMessagesProj_App/build/outputs/apk/debug/
+
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: telegram-debug.apk
-        path: TMessagesProj/build/outputs/apk/debug/Telegram*.apk
+        path: TMessagesProj_App/build/outputs/apk/debug/app.apk
