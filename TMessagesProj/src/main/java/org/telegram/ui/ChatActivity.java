@@ -1184,6 +1184,7 @@ public class ChatActivity extends BaseFragment implements
     public final static int OPTION_SUGGESTION_EDIT_TIME = 112;
     public final static int OPTION_SUGGESTION_EDIT_MESSAGE = 113;
     public final static int OPTION_SUGGESTION_ADD_OFFER = 114;
+    public final static int OPTION_NLLB_TRANSLATE = 115;
 
     private final static int[] allowedNotificationsDuringChatListAnimations = new int[]{
             NotificationCenter.messagesRead,
@@ -31136,6 +31137,22 @@ public class ChatActivity extends BaseFragment implements
                             cell.setVisibility(View.GONE);
                         }
                     }
+                    if (option == OPTION_NLLB_TRANSLATE) {
+                        cell.setOnClickListener(e -> {
+                            if (selectedObject == null || getParentActivity() == null) {
+                                return;
+                            }
+                            closeMenu(false);
+                            
+                            CharSequence messageText = selectedObject.getMessageText();
+                            if (messageText == null || messageText.length() == 0) {
+                                return;
+                            }
+                            
+                            NllbTranslateBottomSheet bottomSheet = new NllbTranslateBottomSheet(this, currentAccount, selectedObject, getResourceProvider());
+                            bottomSheet.show();
+                        });
+                    }
                 }
                 if (selectedObject != null && selectedObject.messageOwner != null && selectedObject.messageOwner.video_processing_pending) {
                     popupLayout.addView(new ActionBarPopupWindow.GapView(contentView.getContext(), themeDelegate), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
@@ -44360,6 +44377,11 @@ public class ChatActivity extends BaseFragment implements
                 if (selectedObject != null && selectedObject.contentType == 0 && (!TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(groupedMessages, null)) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice())) {
                     items.add(LocaleController.getString(R.string.TranslateMessage));
                     options.add(OPTION_TRANSLATE);
+                    icons.add(R.drawable.msg_translate);
+                }
+                if (selectedObject != null && selectedObject.contentType == 0 && !TextUtils.isEmpty(selectedObject.getMessageText()) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) {
+                    items.add("NLLB Translate");
+                    options.add(OPTION_NLLB_TRANSLATE);
                     icons.add(R.drawable.msg_translate);
                 }
                 if (message.canEditMessage(currentChat) && message.type != MessageObject.TYPE_POLL) {
