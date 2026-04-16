@@ -13,7 +13,7 @@ on:
         default: '6666'
 
 jobs:
-  build:
+  build-arm64:
     runs-on: ubuntu-latest
 
     steps:
@@ -48,14 +48,55 @@ jobs:
         echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> gradle.properties
         echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> gradle.properties
 
-    - name: Build Release APK
-      run: ./gradlew :TMessagesProj_App:assembleAfatRelease
+    - name: Build arm64-v8a Release APK
+      run: ./gradlew :TMessagesProj_App:assembleAfatRelease -Pnative.abi=arm64-v8a
 
-    - name: Find APK
-      run: find TMessagesProj_App/build/outputs -name "*.apk" -type f
-
-    - name: Upload Release APK
+    - name: Upload arm64-v8a APK
       uses: actions/upload-artifact@v4
       with:
-        name: telegram-release.apk
+        name: telegram-release-arm64-v8a
+        path: TMessagesProj_App/build/outputs/apk/afat/release/
+
+  build-x86_64:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+
+    - name: Replace API keys in BuildVars.java
+      run: |
+        sed -i 's/public static int APP_ID = .*/public static int APP_ID = ${{ secrets.APP_ID }};/' TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+        sed -i 's/public static String APP_HASH = ".*";/public static String APP_HASH = "${{ secrets.APP_HASH }}";/' TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+
+    - name: Create google-services.json from secret
+      run: |
+        cat << 'GSEOF' > TMessagesProj_App/google-services.json
+        ${{ secrets.GOOGLE_SERVICES_JSON }}
+        GSEOF
+
+    - name: Create gradle.properties
+      run: |
+        echo "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}" >> gradle.properties
+        echo "RELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}" >> gradle.properties
+        echo "RELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}" >> gradle.properties
+
+    - name: Build x86_64 Release APK
+      run: ./gradlew :TMessagesProj_App:assembleAfatRelease -Pnative.abi=x86_64
+
+    - name: Upload x86_64 APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: telegram-release-x86_64
         path: TMessagesProj_App/build/outputs/apk/afat/release/
