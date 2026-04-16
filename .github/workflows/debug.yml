@@ -35,7 +35,7 @@ jobs:
         echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > TMessagesProj_App/google-services.json
 
     - name: Build Debug APK
-      run: ./gradlew :TMessagesProj_App:assembleBundleAfatDebug
+      run: ./gradlew :TMessagesProj_App:assembleAfatDebug
 
     - name: Find Debug APK
       run: find TMessagesProj_App/build/outputs -name "*.apk" -type f
@@ -44,4 +44,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: telegram-debug.apk
-        path: TMessagesProj_App/build/outputs/apk/bundleAfat/debug/app.apk
+        path: TMessagesProj_App/build/outputs/apk/afat/debug/app.apk
