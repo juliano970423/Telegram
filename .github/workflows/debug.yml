@@ -25,14 +25,19 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
 
+    - name: Replace API keys in BuildVars.java
+      run: |
+        sed -i 's/public static int APP_ID = .*/public static int APP_ID = ${{ secrets.APP_ID }};/' TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+        sed -i 's/public static String APP_HASH = ".*";/public static String APP_HASH = "${{ secrets.APP_HASH }}";/' TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+
     - name: Build Debug APK
-      run: ./gradlew :TMessagesProj_App:assembleDebug
+      run: ./gradlew :TMessagesProj_App:assembleBundleAfatDebug
 
     - name: Find Debug APK
-      run: ls -la TMessagesProj_App/build/outputs/apk/debug/
+      run: find TMessagesProj_App/build/outputs -name "*.apk" -type f
 
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: telegram-debug.apk
-        path: TMessagesProj_App/build/outputs/apk/debug/app.apk
+        path: TMessagesProj_App/build/outputs/apk/bundleAfat/debug/app.apk
