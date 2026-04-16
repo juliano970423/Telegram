@@ -13,24 +13,26 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
 
     - name: Build Debug APK
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile
-        tags: telegram-build
-        outputs: type=local,dest=/tmp/apk
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+      run: ./gradlew :TMessagesProj_App:assembleDebug
 
     - name: Find Debug APK
-      run: ls -la /tmp/apk/TMessagesProj/build/outputs/apk/debug/
+      run: ls -la TMessagesProj_App/build/outputs/apk/debug/
 
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: telegram-debug.apk
-        path: /tmp/apk/TMessagesProj/build/outputs/apk/debug/app.apk
+        path: TMessagesProj_App/build/outputs/apk/debug/app.apk
