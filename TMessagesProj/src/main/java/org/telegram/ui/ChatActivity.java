@@ -31144,7 +31144,8 @@ public class ChatActivity extends BaseFragment implements
                             }
                             closeMenu(false);
                             
-                            CharSequence messageText = selectedObject.getMessageText();
+                            int[] msgId = new int[] { selectedObject.getId() };
+                            CharSequence messageText = selectedObject.getMessageTextToTranslate(null, msgId);
                             if (messageText == null || messageText.length() == 0) {
                                 return;
                             }
@@ -44379,7 +44380,7 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_TRANSLATE);
                     icons.add(R.drawable.msg_translate);
                 }
-                if (selectedObject != null && selectedObject.contentType == 0 && !TextUtils.isEmpty(selectedObject.getMessageText()) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) {
+                if (selectedObject != null && selectedObject.contentType == 0 && !TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(groupedMessages, null)) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) {
                     items.add("NLLB Translate");
                     options.add(OPTION_NLLB_TRANSLATE);
                     icons.add(R.drawable.msg_translate);

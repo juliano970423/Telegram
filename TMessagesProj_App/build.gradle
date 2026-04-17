@@ -19,9 +19,6 @@ dependencies {
     implementation project(':TMessagesProj')
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
-    
-    // ONNX Runtime for NLLB translation
-    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.22.0'
 }
 
 android {
