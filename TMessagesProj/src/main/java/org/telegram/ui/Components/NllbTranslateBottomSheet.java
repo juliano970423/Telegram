@@ -23,9 +23,8 @@ public class NllbTranslateBottomSheet extends BottomSheet {
 
     public NllbTranslateBottomSheet(BaseFragment fragment, int currentAccount, MessageObject messageObject, Theme.ResourcesProvider resourcesProvider) {
         super(fragment.getContext(), false);
-        this.fragment = fragment;
-        this.currentAccount = currentAccount;
         this.messageObject = messageObject;
+        this.currentAccount = currentAccount;
         this.resourcesProvider = resourcesProvider;
         
         init();
@@ -66,22 +65,11 @@ public class NllbTranslateBottomSheet extends BottomSheet {
         TextView translationTextView = new TextView(getContext());
         translationTextView.setTextSize(16);
         translationTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
-        translationTextView.setText("Translating...");
+        translationTextView.setText("Translation feature coming soon...");
         container.addView(translationTextView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(400));
         setContentView(container, layoutParams);
-
-        translateText(originalText != null ? originalText.toString() : "", translationTextView);
-    }
-
-    private void translateText(String text, TextView translationTextView) {
-        if (text.isEmpty()) {
-            translationTextView.setText("No text to translate");
-            return;
-        }
-        
-        translationTextView.setText("[Offline Translation] " + text);
     }
 
     @Override
