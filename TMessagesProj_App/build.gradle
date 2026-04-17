@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 repositories {
     mavenCentral()
     google()
-    maven { url 'https://pkgs.dev.azure.com/onnxruntime/onnxruntime-android/_packaging/onnxruntime-android/maven/v1' }
+    maven { url 'https://repo.spring.io/release' }
 }
 
 configurations {
@@ -21,7 +21,7 @@ dependencies {
     implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
     
     // ONNX Runtime for NLLB translation
-    implementation 'com.microsoft.onnxruntime:onnx-runtime-android:1.17.1'
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.22.0'
 }
 
 android {
